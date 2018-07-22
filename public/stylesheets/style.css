@@ -1,7 +1,21 @@
 /* Always set the map height explicitly to define the size of the div
  * element that contains the map. */
+#container {
+  height: 100%;
+  width: 100%;
+  display: inline-block;
+}
+
 #map {
   height: 100%;
+  width: 70%;
+  float: left;
+}
+
+#side-panel {
+  height: 100%;
+  width: 30%;
+  float: left;
 }
 /* Optional: Makes the sample page fill the window. */
 html, body {
@@ -16,7 +30,8 @@ html, body {
 }
 
 #infowindow-content .title {
-  font-weight: bold;
+  font-weight: 500;
+  font-size: 14px;
 }
 
 #infowindow-content {
@@ -62,7 +77,7 @@ html, body {
   margin-left: 12px;
   padding: 0 11px 0 13px;
   text-overflow: ellipsis;
-  width: 400px;
+  width: 350px;
 }
 
 #pac-input:focus {
