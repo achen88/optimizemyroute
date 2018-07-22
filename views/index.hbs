@@ -13,6 +13,8 @@ var bounds = null;
 var orderedLocs = [];
 var unorderedLocs = []; // needs impl
 
+var clearInput = false;
+
 function init() {
   bounds = new google.maps.LatLngBounds();
 }
@@ -67,7 +69,15 @@ function initAutocomplete() {
     }
 
     map.fitBounds(bounds);
+    clearInput = true;
   });
+
+  input.addEventListener('click', function() {
+    if (clearInput) {
+      clearInput = false;
+      input.value = "";
+    }
+  })
 
   document.getElementById('calculate-route').addEventListener('click', function() {
     calculateAndDisplayRoute(directionsService, directionsDisplay);
