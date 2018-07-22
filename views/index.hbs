@@ -1,2 +1,116 @@
-<h1>{{title}}</h1>
-<p>Welcome to {{title}}</p>
+<input id="pac-input" class="controls" type="text" placeholder="Search Box">
+<input id="calculate-route" class="controls" type="button" value="Calculate Route">
+<input id="clear" class="control" type="button" value="Clear">
+<div id="map"></div>
+<script>
+var markers = [];
+var labelIndex = 0;
+var bounds = null;
+
+var orderedLocs = [];
+var unorderedLocs = []; // needs impl
+
+function init() {
+  bounds = new google.maps.LatLngBounds();
+}
+
+function initAutocomplete() {
+  init();
+  var directionsDisplay = new google.maps.DirectionsRenderer({ supressMarkers: true });
+  var directionsService = new google.maps.DirectionsService;
+  var map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 37.09024, lng: -95.712891},
+    zoom: 4.5,
+    mapTypeId: 'roadmap',
+    streetViewControl: false,
+    mapTypeControl: false
+  });
+  directionsDisplay.setMap(map);
+
+  // Create the search box and link it to the UI element.
+  var input = document.getElementById('pac-input');
+  input.style.display = 'block';
+  var autocomplete = new google.maps.places.Autocomplete(input);
+  map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
+  autocomplete.setFields(['geometry', 'name']);
+  map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(document.getElementById('calculate-route'));
+  map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(document.getElementById('clear'));
+
+  // Bias the autocomplete results towards current map's viewport.
+  map.addListener('bounds_changed', function() {
+    autocomplete.setBounds(map.getBounds());
+  });
+
+  // Listen for the event fired when the user selects a prediction
+  autocomplete.addListener('place_changed', function() {
+    // fetch place
+    var place = autocomplete.getPlace();
+    console.log(place.name);
+    if (!place.geometry) {
+      console.log("Returned place contains no geometry");
+      return;
+    }
+
+    // add marker
+    addMarker(place.geometry.location, map);
+
+    // extend map bounds
+    if (place.geometry.viewport) {
+      // Only geocodes have viewport.
+      bounds.union(place.geometry.viewport);
+    } else {
+      bounds.extend(place.geometry.location);
+    }
+
+    map.fitBounds(bounds);
+  });
+
+  document.getElementById('calculate-route').addEventListener('click', function() {
+    calculateAndDisplayRoute(directionsService, directionsDisplay);
+  });
+  document.getElementById('clear').addEventListener('click', function() {
+    clearMarkers(directionsDisplay);
+  });
+}
+
+function addMarker(location, map) {
+  // create and add marker
+  var marker = new google.maps.Marker({
+    position: location,
+    label: (labelIndex++).toString(),
+    map: map
+  });
+  markers.push(marker);
+  orderedLocs.push({location: marker.position});
+}
+
+function clearMarkers(directionsDisplay) {
+  markers.forEach(function(marker) {
+    marker.setMap(null);
+  });
+  markers = [];
+  orderedLocs = [];
+  directionsDisplay.setDirections(null);
+}
+
+function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+  console.log(orderedLocs);
+  directionsService.route({
+    origin: orderedLocs[0],
+    destination: orderedLocs[orderedLocs.length - 1],
+    waypoints: orderedLocs.slice(1, orderedLocs.length - 1),
+    optimizeWaypoints: true,
+    travelMode: 'DRIVING'
+  }, function(response, status) {
+    if (status === 'OK') {
+      directionsDisplay.setDirections(response);
+
+      // take first route
+      var route = response.routes[0];
+      console.log(route);
+    } else {
+      window.alert('Directions request failed due to ' + status);
+    }
+  });
+}
+</script>
