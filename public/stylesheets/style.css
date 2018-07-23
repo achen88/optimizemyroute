@@ -95,3 +95,21 @@ html, body {
 #target {
   width: 345px;
 }
+
+#loader {
+  position: fixed;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  z-index: 3;
+  align-items: center;
+  justify-content: center;
+  color: #153B50;
+  font-size: 40px;
+  font-weight: 400;
+  background-color: #F5F5F5;
+}
+
+.panel {
+  background-color: #F5F5F5;
+}

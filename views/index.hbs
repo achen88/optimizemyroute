@@ -1,10 +1,17 @@
+<div id="loader">loading...</div>
 <input id="pac-input" class="controls" type="text" placeholder="Search Box">
 <input id="calculate-route" class="controls" type="button" value="Calculate Route">
 <input id="clear" class="control" type="button" value="Clear">
 <div id="container">
   <div id="map"></div>
-  <div id="side-panel"></div>
+  <div class="panel">
+
+    <div class="panel info">
+
+    </div>
+  </div>
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
 var markers = [];
 var labelIndex = 0;
@@ -84,6 +91,12 @@ function initAutocomplete() {
   });
   document.getElementById('clear').addEventListener('click', function() {
     clearMarkers(directionsDisplay);
+  });
+
+  google.maps.event.addListenerOnce(map, 'idle', function() {
+    setTimeout(function() {
+      $('#loader').remove();
+    }, 500);
   });
 }
 
