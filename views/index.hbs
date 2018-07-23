@@ -1,26 +1,39 @@
 <div id="loader">loading...</div>
-<input id="pac-input" class="controls" type="text" placeholder="Search Box">
+<input id="pac-input" class="pac-controls" type="text" placeholder="Search Box">
 <input id="calculate-route" class="controls" type="button" value="Calculate Route">
-<input id="clear" class="control" type="button" value="Clear">
+<input id="clear" class="controls" type="button" value="Reset">
+<div class="instructions">
+  Select a few locations using the search box. To get the optimal route from first location to the last, hit "Calculate Route"/"Get Directions".
+  <p></p>
+  <div class="instructions-hide" onclick="hideInstructions()">
+    Hide instructions
+  </div>
+</div>
 <div id="container">
   <div id="map"></div>
-  <div class="panel">
+<!--   <div class="panel outer">
 
     <div class="panel info">
 
     </div>
-  </div>
+  </div> -->
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
+function hideInstructions() {
+  $(".instructions").remove();
+}
+
 var markers = [];
 var labelIndex = 0;
 var bounds = null;
 
 var orderedLocs = [];
 var unorderedLocs = []; // needs impl
+var optimalRoute = [];
 
 var clearInput = false;
+var referButton = false;
 
 function init() {
   bounds = new google.maps.LatLngBounds();
@@ -86,11 +99,19 @@ function initAutocomplete() {
     }
   })
 
-  document.getElementById('calculate-route').addEventListener('click', function() {
-    calculateAndDisplayRoute(directionsService, directionsDisplay);
+  $('#calculate-route').on('click', function() {
+    if (referButton) {
+      referToGoogleMaps();
+    } else {
+      calculateAndDisplayRoute(directionsService, directionsDisplay);
+      referButton = true;
+      toggleButton(referButton);
+    }
   });
-  document.getElementById('clear').addEventListener('click', function() {
+  $('#clear').on('click', function() {
     clearMarkers(directionsDisplay);
+    referButton = false;
+    toggleButton(referButton);
   });
 
   google.maps.event.addListenerOnce(map, 'idle', function() {
@@ -137,7 +158,6 @@ function addInfo(name, marker) {
 }
 
 function calculateAndDisplayRoute(directionsService, directionsDisplay) {
-  console.log(orderedLocs);
   directionsService.route({
     origin: orderedLocs[0],
     destination: orderedLocs[orderedLocs.length - 1],
@@ -149,11 +169,41 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       directionsDisplay.setDirections(response);
 
       // take first route
+      // select a route?
       var route = response.routes[0];
+      console.log(response.routes);
       console.log(route);
+      route.legs.forEach(function(leg) {
+        optimalRoute.push(leg.start_address);
+      });
+      optimalRoute.push(route.legs[route.legs.length - 1].end_address);
     } else {
       window.alert('Directions request failed due to ' + status);
     }
   });
+}
+
+function referToGoogleMaps() {
+  // to optimize, encode space as '+' not as '%20'
+  var baseUrl = 'https://www.google.com/maps/dir/?api=1';
+  baseUrl += '&origin=' + encodeURIComponent(optimalRoute[0]);
+  var waypoints = '';
+  for (var i = 1; i < optimalRoute.length - 1; i++) {
+    waypoints += encodeURIComponent(optimalRoute[i]);
+    if (i != optimalRoute.length - 2) {
+      waypoints += '%7C'; // url-encoded '|''
+    }
+  };
+  baseUrl += '&waypoints=' + waypoints;
+  baseUrl += '&destination=' + encodeURIComponent(optimalRoute[optimalRoute.length - 1]);
+  window.location.href = baseUrl;
+};
+
+function toggleButton(referButton) {
+  if (referButton) {
+    $('#calculate-route').val(' Get Directions ');
+  } else {
+    $('#calculate-route').val('Calculate Route');
+  }
 }
 </script>
