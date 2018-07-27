@@ -8,7 +8,7 @@
 
 #map {
   height: 100%;
-  width: 100%;
+  width: 70%;
   float: left;
 }
 
@@ -98,6 +98,7 @@ html, body {
 }
 
 #loader {
+  top: 0px;
   position: fixed;
   display: flex;
   height: 100%;
@@ -112,11 +113,18 @@ html, body {
 }
 
 .panel {
+  font-family: Roboto;
   background-color: #F5F5F5;
+  margin: 0;
 }
 
 .outer {
   height: 100%;
+  overflow: scroll;
+}
+
+.inner {
+  margin: 10px;
 }
 
 .controls {
@@ -143,7 +151,7 @@ html, body {
 }
 
 .instructions-hide {
-  color: #429EA6;
+  color: #000000;
   cursor: pointer;
   padding: 0 0 0 62px;
   border: solid;
@@ -151,3 +159,33 @@ html, body {
   border-color: #9DC5BB;
 }
 
+#panel-title {
+  font-size: 24pt;
+  color: #153B50;
+  text-align: center;
+  margin: 10px;
+  background-color: #FFFFFF;
+  border: solid;
+  border-width: 1px;
+  border-color: #429EA6;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #153B50;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #DDDDDD;
+}
+
+.td-close {
+  width: 19px;
+  text-align: center;
+}

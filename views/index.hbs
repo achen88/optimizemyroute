@@ -11,12 +11,17 @@
 </div>
 <div id="container">
   <div id="map"></div>
-<!--   <div class="panel outer">
-
-    <div class="panel info">
-
+  <div id="side-panel" class="panel outer">
+    <div id="panel-title"> Optimize My Route 🚗 </div>
+    <div id="info" class="panel inner">
+      <table id="table">
+        <tr>
+          <th>Locations</th>
+          <th class="td-close"></th>
+        </tr>
+      </table>
     </div>
-  </div> -->
+  </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
@@ -90,6 +95,8 @@ function initAutocomplete() {
 
     map.fitBounds(bounds);
     clearInput = true;
+    $("#table").append(
+      "<tr><td>" + place.name + "</td><td class =\"td-close\" id=\"td-" + markers.length + "\">x</td></tr>");
   });
 
   input.addEventListener('click', function() {
