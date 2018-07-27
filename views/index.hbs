@@ -165,7 +165,7 @@ function clearInterface(directionsDisplay) {
     marker.setMap(null);
     $("#td-" + (parseInt(id) + 1).toString()).parent().remove();
   });
-  
+  optimalRoute = [];
   markers = {};
   orderedLocs = {};
   geometries = {};
@@ -216,7 +216,6 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       // select a route?
       var route = response.routes[0];
       console.log(response.routes);
-      console.log(route);
       route.legs.forEach(function(leg) {
         optimalRoute.push(leg.start_address);
       });
