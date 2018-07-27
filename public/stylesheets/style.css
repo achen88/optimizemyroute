@@ -131,7 +131,7 @@ html, body {
   margin: 5px;
   background-color: #fff;
   font-family: Roboto;
-  font-size: 120px;
+  font-size: 20px;
   font-weight: 300;
 }
 
@@ -186,6 +186,14 @@ tr:nth-child(even) {
 }
 
 .td-close {
+  cursor: pointer;
+  color: #153B50;
   width: 19px;
   text-align: center;
+  vertical-align: middle;
+  padding-top: 6px;
+}
+
+.unclickable {
+  cursor: default;
 }

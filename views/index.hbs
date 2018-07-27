@@ -17,7 +17,7 @@
       <table id="table">
         <tr>
           <th>Locations</th>
-          <th class="td-close"></th>
+          <th class="td-close unclickable"></th>
         </tr>
       </table>
     </div>
@@ -29,23 +29,18 @@ function hideInstructions() {
   $(".instructions").remove();
 }
 
-var markers = [];
+var markers = {};
+var geometries = {};
 var labelIndex = 0;
-var bounds = null;
 
-var orderedLocs = [];
+var orderedLocs = {};
 var unorderedLocs = []; // needs impl
 var optimalRoute = [];
 
 var clearInput = false;
 var referButton = false;
 
-function init() {
-  bounds = new google.maps.LatLngBounds();
-}
-
 function initAutocomplete() {
-  init();
   var directionsDisplay = new google.maps.DirectionsRenderer({ suppressMarkers: true });
   var directionsService = new google.maps.DirectionsService;
   var map = new google.maps.Map(document.getElementById('map'), {
@@ -75,28 +70,32 @@ function initAutocomplete() {
   autocomplete.addListener('place_changed', function() {
     // fetch place
     var place = autocomplete.getPlace();
-    console.log(place.name);
     if (!place.geometry) {
       console.log("Returned place contains no geometry");
       return;
     }
 
+    geometries[labelIndex] = place.geometry;
+
     // add marker
     var marker = addMarker(place.geometry.location, map);
     addInfo(place.name, marker);
 
-    // extend map bounds
-    if (place.geometry.viewport) {
-      // Only geocodes have viewport.
-      bounds.union(place.geometry.viewport);
-    } else {
-      bounds.extend(place.geometry.location);
-    }
-
-    map.fitBounds(bounds);
+    fitBounds(map);
     clearInput = true;
     $("#table").append(
-      "<tr><td>" + place.name + "</td><td class =\"td-close\" id=\"td-" + markers.length + "\">x</td></tr>");
+      "<tr><td>" + place.name + "</td><td class =\"td-close\" id=\"td-" + labelIndex + "\">x</td></tr>");
+    
+    $("#td-" + labelIndex).on('click', function() {
+      var id = $(this).attr('id');
+      var index = id[id.length - 1] - 1;
+      markers[index].setMap(null);
+      delete markers[index];
+      delete geometries[index];
+      delete orderedLocs[index];
+      fitBounds(map);
+      $(this).parent().remove();
+    });
   });
 
   input.addEventListener('click', function() {
@@ -107,7 +106,7 @@ function initAutocomplete() {
   })
 
   $('#calculate-route').on('click', function() {
-    if (markers.length > 1) {
+    if (length(markers) > 1) {
       if (referButton) {
         referToGoogleMaps();
       } else {
@@ -118,7 +117,7 @@ function initAutocomplete() {
     }
   });
   $('#clear').on('click', function() {
-    clearMarkers(directionsDisplay);
+    clearInterface(directionsDisplay);
     referButton = false;
     toggleButton(referButton);
   });
@@ -130,24 +129,46 @@ function initAutocomplete() {
   });
 }
 
+function length(obj) {
+  return $.map(obj, function(n, i) { return i; }).length
+}
+
+function fitBounds(map) {
+  if (length(geometries) == 0) {
+    return;
+  }
+  const bounds = new google.maps.LatLngBounds();
+  $.each(geometries, function(id, geometry) {
+    if (geometry.viewport) {
+      bounds.union(geometry.viewport);
+    } else {
+      bounds.extend(geometry.location);
+    }
+  });
+  map.fitBounds(bounds);
+}
+
 function addMarker(location, map) {
   // create and add marker
   var marker = new google.maps.Marker({
     position: location,
-    label: (labelIndex++).toString(),
+    label: (labelIndex).toString(),
     map: map
   });
-  markers.push(marker);
-  orderedLocs.push({location: marker.position});
+  markers[labelIndex] = marker;
+  orderedLocs[labelIndex++] = { "location": marker.position };
   return marker;
 }
 
-function clearMarkers(directionsDisplay) {
-  markers.forEach(function(marker) {
+function clearInterface(directionsDisplay) {
+  $.each(markers, function(id, marker) {
     marker.setMap(null);
+    $("#td-" + (parseInt(id) + 1).toString()).parent().remove();
   });
-  markers = [];
-  orderedLocs = [];
+  
+  markers = {};
+  orderedLocs = {};
+  geometries = {};
   directionsDisplay.set('directions', null);
 }
 
@@ -167,16 +188,30 @@ function addInfo(name, marker) {
 }
 
 function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+  var origin = [10e10, null]
+  var destination = [0, null] 
+  $.each(orderedLocs, function(id, loc) {
+    if (id < origin[0]) {
+      origin = [id, loc];
+    } else if (id > destination[0]) {
+      destination = [id, loc];
+    }
+  });
+  var waypoints = [];
+  $.each(orderedLocs, function(id, loc) {
+    if (id != origin[0] && id != destination[0]) {
+      waypoints.push(loc);
+    }
+  });
   directionsService.route({
-    origin: orderedLocs[0],
-    destination: orderedLocs[orderedLocs.length - 1],
-    waypoints: orderedLocs.slice(1, orderedLocs.length - 1),
+    origin: origin[1],
+    destination: destination[1],
+    waypoints: waypoints,
     optimizeWaypoints: true,
     travelMode: 'DRIVING'
   }, function(response, status) {
     if (status === 'OK') {
       directionsDisplay.setDirections(response);
-
       // take first route
       // select a route?
       var route = response.routes[0];
