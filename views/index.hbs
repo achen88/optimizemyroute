@@ -100,12 +100,14 @@ function initAutocomplete() {
   })
 
   $('#calculate-route').on('click', function() {
-    if (referButton) {
-      referToGoogleMaps();
-    } else {
-      calculateAndDisplayRoute(directionsService, directionsDisplay);
-      referButton = true;
-      toggleButton(referButton);
+    if (markers.length > 1) {
+      if (referButton) {
+        referToGoogleMaps();
+      } else {
+        calculateAndDisplayRoute(directionsService, directionsDisplay);
+        referButton = true;
+        toggleButton(referButton);
+      }
     }
   });
   $('#clear').on('click', function() {
