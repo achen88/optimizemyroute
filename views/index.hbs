@@ -222,6 +222,8 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       optimalRoute.push(route.legs[route.legs.length - 1].end_address);
     } else {
       window.alert('Directions request failed due to ' + status);
+      referButton = false;
+      toggleButton(referButton);
     }
   });
 }
