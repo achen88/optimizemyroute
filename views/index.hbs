@@ -31,6 +31,8 @@ function hideInstructions() {
   $(".instructions").remove();
 }
 
+
+var map = null;
 var markers = {};
 var geometries = {};
 var labelIndex = 0;
@@ -60,10 +62,21 @@ function initAutocomplete() {
   });
 }
 
+var removeLocation = function() {
+  var id = $(this).attr('id');
+  var index = id[id.length - 1] - 1;
+  markers[index].setMap(null);
+  delete markers[index];
+  delete geometries[index];
+  delete orderedLocs[index];
+  fitBounds(map);
+  $(this).parent().remove();
+}
+
 function init(opts) {
   var directionsDisplay = new google.maps.DirectionsRenderer({ suppressMarkers: true });
   var directionsService = new google.maps.DirectionsService;
-  var map = new google.maps.Map(document.getElementById('map'), opts);
+  map = new google.maps.Map(document.getElementById('map'), opts);
   directionsDisplay.setMap(map);
 
   // Create the search box and link it to the UI element.
@@ -100,16 +113,7 @@ function init(opts) {
     $("#table").append(
       "<tr><td>" + place.name + "</td><td class =\"td-close\" id=\"td-" + labelIndex + "\">x</td></tr>");
     
-    $("#td-" + labelIndex).on('click', function() {
-      var id = $(this).attr('id');
-      var index = id[id.length - 1] - 1;
-      markers[index].setMap(null);
-      delete markers[index];
-      delete geometries[index];
-      delete orderedLocs[index];
-      fitBounds(map);
-      $(this).parent().remove();
-    });
+    $("#td-" + labelIndex).on('click', removeLocation);
   });
 
   input.addEventListener('click', function() {
@@ -261,8 +265,21 @@ function referToGoogleMaps() {
 function toggleButton(referButton) {
   if (referButton) {
     $('#calculate-route').val(' Get Directions ');
+    forLocations(function(id) {
+      $("#td-" + (parseInt(id) + 1).toString()).off('click', removeLocation);
+      $("#td-" + (parseInt(id) + 1).toString()).text('');
+      $("#td-" + (parseInt(id) + 1).toString()).css('cursor', 'default');
+    });
+    $('#pac-input').css('z-index', -3);
   } else {
     $('#calculate-route').val('Calculate Route');
+    $('#pac-input').css('z-index', 3);
   }
+}
+
+function forLocations(lambda) {
+  $.each(markers, function(id, marker) {
+    lambda(id);
+  });
 }
 </script>
