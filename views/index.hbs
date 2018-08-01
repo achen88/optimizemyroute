@@ -1,7 +1,5 @@
 <div id="loader">loading...</div>
 <input id="pac-input" class="pac-controls" type="text" placeholder="Search Box">
-<input id="calculate-route" class="controls" type="button" value="Calculate Route">
-<input id="clear" class="controls" type="button" value="Reset">
 <div class="instructions">
   Select a few locations using the search box. To get the optimal route from first location to the last, hit "Calculate Route"/"Get Directions".
   <p></p>
@@ -14,6 +12,10 @@
   <div id="side-panel" class="panel outer">
     <div id="panel-title">
       <img id="logo" src="/images/crop.png" alt="Optimize My Route">
+    </div>
+    <div id="button-wrapper">
+      <input id="calculate-route" class="controls" type="button" value="Calculate Route">
+      <input id="clear" class="controls" type="button" value="Reset">
     </div>
     <div id="info" class="panel inner">
       <table id="table">
@@ -86,9 +88,7 @@ function init(opts) {
   var autocomplete = new google.maps.places.Autocomplete(input);
   map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
   autocomplete.setFields(['geometry', 'name']);
-  map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(document.getElementById('calculate-route'));
-  map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(document.getElementById('clear'));
-
+  
   // Bias the autocomplete results towards current map's viewport.
   map.addListener('bounds_changed', function() {
     autocomplete.setBounds(map.getBounds());

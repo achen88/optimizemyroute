@@ -129,11 +129,30 @@ html, body {
 }
 
 .controls {
+  -webkit-appearance: none;
   margin: 5px;
   background-color: #fff;
   font-family: Roboto;
-  font-size: 20px;
-  font-weight: 300;
+  font-size: 16px;
+  font-weight: 400;
+  padding: 2px 14px 2px;
+  border: 1px;
+  border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
+  border-style: solid;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.controls:hover {
+  background-color: #bdc3c7;
+}
+
+.controls:active {
+  background-color: #7f8c8d;
+}
+
+.controls:focus {
+  outline: 0;
 }
 
 .instructions {
@@ -214,4 +233,9 @@ tr:nth-child(even) {
   margin-right: auto;
   max-height: 19px;
   display: block;
+}
+
+#button-wrapper {
+  text-align: center;
+  margin-top: 30px;
 }
