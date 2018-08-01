@@ -18,6 +18,7 @@
     <div id="info" class="panel inner">
       <table id="table">
         <tr>
+          <th class="td-label"><img id="marker-icon" src="/images/marker.png" alt-"ID"></th>
           <th>Locations</th>
           <th class="td-close unclickable"></th>
         </tr>
@@ -111,7 +112,7 @@ function init(opts) {
     fitBounds(map);
     clearInput = true;
     $("#table").append(
-      "<tr><td>" + place.name + "</td><td class =\"td-close\" id=\"td-" + labelIndex + "\">x</td></tr>");
+      "<tr><td class=\"td-label\">" + getLetter(labelIndex - 1) + "</td><td>" + place.name + "</td><td class =\"td-close\" id=\"td-" + labelIndex + "\">x</td></tr>");
     
     $("#td-" + labelIndex).on('click', removeLocation);
   });
@@ -170,7 +171,7 @@ function addMarker(location, map) {
   // create and add marker
   var marker = new google.maps.Marker({
     position: location,
-    label: (labelIndex).toString(),
+    label: getLetter(labelIndex),
     map: map
   });
   markers[labelIndex] = marker;
@@ -281,5 +282,10 @@ function forLocations(lambda) {
   $.each(markers, function(id, marker) {
     lambda(id);
   });
+}
+
+function getLetter(index) {
+  const letters = 'ABCDEFGHIJLMNOPQRSTUVWXYZ';
+  return letters.charAt(index % letters.length);
 }
 </script>
