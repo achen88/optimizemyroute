@@ -241,12 +241,20 @@ tr:nth-child(even) {
 }
 
 #select-wrapper {
-  margin-top: 20px;
+  margin-top: 30px;
   text-align: center;
 }
 
+#select-wrapper-outer {
+  display: table;
+  justify-content: center;
+  text-align: right;
+  margin: auto;
+}
+
 .select-wrapper-inner {
-  margin: 5px;
+  display: table-row;
+  margin: auto;
 }
 
 select {
