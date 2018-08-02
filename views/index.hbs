@@ -210,15 +210,15 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
   var origin = [10e10, null]
   var destination = [0, null] 
   $.each(orderedLocs, function(id, loc) {
-    if (id < origin[0]) {
+    if (parseInt(id) < origin[0]) {
       origin = [id, loc];
-    } else if (id > destination[0]) {
+    } else if (parseInt(id) > destination[0]) {
       destination = [id, loc];
     }
   });
   var waypoints = [];
   $.each(orderedLocs, function(id, loc) {
-    if (id != origin[0] && id != destination[0]) {
+    if (parseInt(id) !== origin[0] && parseInt(id) !== destination[0]) {
       waypoints.push(loc);
     }
   });
