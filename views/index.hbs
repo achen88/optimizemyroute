@@ -67,7 +67,7 @@ function initAutocomplete() {
 
 var removeLocation = function() {
   var id = $(this).attr('id');
-  var index = id[id.length - 1] - 1;
+  var index = parseInt(id.substring(3)) - 1;
   markers[index].setMap(null);
   delete markers[index];
   delete geometries[index];
@@ -88,7 +88,7 @@ function init(opts) {
   var autocomplete = new google.maps.places.Autocomplete(input);
   map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
   autocomplete.setFields(['geometry', 'name']);
-  
+
   // Bias the autocomplete results towards current map's viewport.
   map.addListener('bounds_changed', function() {
     autocomplete.setBounds(map.getBounds());
