@@ -236,6 +236,19 @@ tr:nth-child(even) {
 }
 
 #button-wrapper {
+  margin-top: 20px;
   text-align: center;
-  margin-top: 30px;
+}
+
+#select-wrapper {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.select-wrapper-inner {
+  margin: 5px;
+}
+
+select {
+  min-width: 200px;
 }

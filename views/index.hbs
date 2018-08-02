@@ -13,6 +13,18 @@
     <div id="panel-title">
       <img id="logo" src="/images/crop.png" alt="Optimize My Route">
     </div>
+    <div id="select-wrapper">
+      <div class="select-wrapper-inner">
+        Origin:
+        <select id="select-origin" name="origin">
+        </select>
+      </div>
+      <div class="select-wrapper-inner">
+        Destination:
+        <select id="select-destination" name="destination">
+        </select>
+      </div>
+    </div>
     <div id="button-wrapper">
       <input id="calculate-route" class="controls" type="button" value="Calculate Route">
       <input id="clear" class="controls" type="button" value="Reset">
@@ -117,6 +129,8 @@ function init(opts) {
       "<tr><td class=\"td-label\">" + getLetter(labelIndex - 1) + "</td><td>" + place.name + "</td><td class =\"td-close\" id=\"td-" + labelIndex + "\">x</td></tr>");
     
     $("#td-" + labelIndex).on('click', removeLocation);
+    $("#select-origin").append("<option value=\"" + (labelIndex - 1) + "\">" + place.name + "</option>");
+    $("#select-destination").append("<option value=\"" + (labelIndex - 1) + "\" selected=true>" + place.name + "</option>");
   });
 
   input.addEventListener('click', function() {
@@ -209,25 +223,23 @@ function addInfo(name, marker) {
 }
 
 function calculateAndDisplayRoute(directionsService, directionsDisplay) {
-  var origin = [10e10, null]
-  var destination = [0, null] 
-  $.each(orderedLocs, function(id, loc) {
-    if (parseInt(id) < origin[0]) {
-      origin = [id, loc];
-    } else if (parseInt(id) > destination[0]) {
-      destination = [id, loc];
-    }
-  });
+  const originID = $('#select-origin').val();
+  const destinationID = $('#select-destination').val();
+  var origin = null;
+  var destination = null;
   var waypoints = [];
   $.each(orderedLocs, function(id, loc) {
-    if (id !== origin[0] && id !== destination[0]) {
+    if (id === originID) {
+      origin = loc;
+    } else if (id === destinationID) {
+      destination = loc;
+    } else {
       waypoints.push(loc);
     }
   });
-  console.log(waypoints);
   directionsService.route({
-    origin: origin[1],
-    destination: destination[1],
+    origin: origin,
+    destination: destination,
     waypoints: waypoints,
     optimizeWaypoints: true,
     travelMode: 'DRIVING'
