@@ -39,8 +39,8 @@
           <th class="td-close unclickable"></th>
         </tr>
       </table>
-    </div>
-    <div id="path">
+      <div id="path">
+      </div>
     </div>
   </div>
 </div>
@@ -54,10 +54,10 @@ function hideInstructions() {
 var map = null;
 var markers = {};
 var geometries = {};
+var names = {};
 var labelIndex = 0;
 
 var orderedLocs = {};
-var unorderedLocs = []; // needs impl
 var optimalRoute = [];
 
 var clearInput = false;
@@ -91,6 +91,7 @@ var removeLocation = function() {
   delete markers[index];
   delete geometries[index];
   delete orderedLocs[index];
+  delete names[index];
   fitBounds(map);
   $(this).parent().remove();
 }
@@ -125,6 +126,7 @@ function init(opts) {
     geometries[labelIndex] = place.geometry;
 
     // add marker
+    names[labelIndex] = place.name;
     var marker = addMarker(place.geometry.location, map);
     addInfo(place.name, marker);
 
@@ -204,6 +206,7 @@ function addMarker(location, map) {
 function clearInterface(directionsDisplay) {
   $("#select-origin").empty();
   $("#select-destination").empty();
+  $("#path").empty();
   $.each(markers, function(id, marker) {
     marker.setMap(null);
     $("#td-" + (parseInt(id) + 1).toString()).parent().remove();
@@ -212,6 +215,7 @@ function clearInterface(directionsDisplay) {
   markers = {};
   orderedLocs = {};
   geometries = {};
+  names = {};
   directionsDisplay.set('directions', null);
 }
 
@@ -236,6 +240,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
   var origin = null;
   var destination = null;
   var waypoints = [];
+  var waypointsIDs = [];
   $.each(orderedLocs, function(id, loc) {
     if (id === originID) {
       origin = loc;
@@ -245,6 +250,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     } 
     if (id !== originID && id !== destinationID) {
       waypoints.push(loc);
+      waypointsIDs.push(id);
     }
   });
   directionsService.route({
@@ -259,6 +265,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       // take first route
       // select a route?
       var route = response.routes[0];
+      showRouteSummary(route, waypointsIDs);
       console.log(response.routes);
       route.legs.forEach(function(leg) {
         optimalRoute.push(leg.start_address);
@@ -291,14 +298,16 @@ function referToGoogleMaps() {
 function toggleButton(referButton) {
   if (referButton) {
     $('#calculate-route').val(' Get Directions ');
-    forLocations(function(id) {
-      $("#td-" + (parseInt(id) + 1).toString()).off('click', removeLocation);
-      $("#td-" + (parseInt(id) + 1).toString()).text('');
-      $("#td-" + (parseInt(id) + 1).toString()).css('cursor', 'default');
-    });
+    // forLocations(function(id) {
+    //   $("#td-" + (parseInt(id) + 1).toString()).off('click', removeLocation);
+    //   $("#td-" + (parseInt(id) + 1).toString()).text('');
+    //   $("#td-" + (parseInt(id) + 1).toString()).css('cursor', 'default');
+    // });
+    $("#table").hide();
     $('#pac-input').css('z-index', -3);
   } else {
     $('#calculate-route').val('Calculate Route');
+    $("#table").show();
     $('#pac-input').css('z-index', 3);
   }
 }
@@ -312,5 +321,73 @@ function forLocations(lambda) {
 function getLetter(index) {
   const letters = 'ABCDEFGHIJLMNOPQRSTUVWXYZ';
   return letters.charAt(index % letters.length);
+}
+
+function showRouteSummary(route, waypointsIDs) {
+  const originID = $('#select-origin').val();
+  const destinationID = $('#select-destination').val();
+  var rowCount = 0;
+
+  const order = [originID];
+  $.each(route.waypoint_order, function(index, id) {
+    order.push(waypointsIDs[id]);
+  });
+  order.push(destinationID);
+  $('#path').append("<div>Route Info</div>");
+
+
+  var seconds = 0;
+  var meters = 0;
+  $.each(route.legs, function(id, leg) {
+    seconds += leg.duration.value;
+    meters += leg.distance.value;
+  });
+
+  $('#path').append("<div><div>" + timify(seconds) + " (" + (meters * 0.000621371).toFixed(1) + " miles)</div><div>without traffic</div></div>");
+
+  $.each(order, function(index, id) {
+    const ID = parseInt(id);
+    var panel = "<div>" +
+                  "<div>" + "(" + getLetter(ID) + ") " + names[ID] + "</div>";
+    if (route.legs[rowCount]) {
+      panel += "<hr>" +
+               "<div>" + timify(route.legs[rowCount].duration.value) + " " + route.legs[rowCount].distance.text + "</div>";
+    }
+    panel += "</div>";
+
+    $('#path').append(panel);
+
+    rowCount++;
+  });
+}
+
+function timify(seconds) {
+  var hours = "";
+  var minutes = "";
+  var hrRaw = Math.floor(seconds / 3600);
+  var minRaw = Math.round((seconds % 3600) / 60);
+  if (minRaw === 60) {
+    hrRaw += 1;
+    minRaw = 0;
+  } else if (minRaw === 0) {
+    // do nothing
+  } else {
+    minutes = minRaw.toString() + " min";
+  }
+
+  if (seconds >= 3570) {
+    hours = hrRaw.toString() + " h";
+  } else if (seconds < 30) {
+    minutes = "1 min";
+  }
+
+  if (hrRaw >= 24) {
+    if (minRaw >= 30) {
+      hrRaw += 1;
+    }
+    return hrRaw.toString() + " h";
+  }
+
+  return (hours + " " + minutes).trim();
 }
 </script>
