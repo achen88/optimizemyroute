@@ -333,7 +333,7 @@ function showRouteSummary(route, waypointsIDs) {
     order.push(waypointsIDs[id]);
   });
   order.push(destinationID);
-  $('#path').append("<div>Route Info</div>");
+  $('#path').append("<div id=\"route-title\">Route Summary</div>");
 
 
   var seconds = 0;
@@ -343,15 +343,19 @@ function showRouteSummary(route, waypointsIDs) {
     meters += leg.distance.value;
   });
 
-  $('#path').append("<div><div>" + timify(seconds) + " (" + (meters * 0.000621371).toFixed(1) + " miles)</div><div>without traffic</div></div>");
+  $('#path').append("<div id=\"route-header\"><div id=\"route-summary\">" + timify(seconds) + " <span class=\"route-distance\">(" + (meters * 0.000621371).toFixed(1) + " miles)</span></div><div id=\"route-disclaimer\">without traffic</div></div><div id=\"route-panel-header\" class=\"route-hr \"></div>");
 
   $.each(order, function(index, id) {
     const ID = parseInt(id);
-    var panel = "<div>" +
-                  "<div>" + "(" + getLetter(ID) + ") " + names[ID] + "</div>";
+    var panel = "<div class=\"route-panel\">" +
+                  "<div class=\"route-name\">" + "(" + getLetter(ID) + ") " + names[ID] + "</div>";
     if (route.legs[rowCount]) {
-      panel += "<hr>" +
-               "<div>" + timify(route.legs[rowCount].duration.value) + " " + route.legs[rowCount].distance.text + "</div>";
+      panel += "<div class=\"route-address\">" + route.legs[rowCount].start_address + "</div>";
+      panel += "<div class=\"route-divider\">" +
+                "<div class=\"route-hr\"></div>" +
+                "<div class=\"route-info\">" + timify(route.legs[rowCount].duration.value) + " <span class=\"route-distance\">(" + route.legs[rowCount].distance.text + ")</span></div></div>";
+    } else {
+      panel += "<div class=\"route-address\">" + route.legs[rowCount - 1].end_address + "</div>";
     }
     panel += "</div>";
 

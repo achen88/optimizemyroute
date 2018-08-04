@@ -260,3 +260,74 @@ tr:nth-child(even) {
 select {
   min-width: 200px;
 }
+
+#path {
+  margin: 20px auto;
+  width: 90%;
+}
+
+.route-panel {
+  margin: 10px 0;
+  width: 100%;
+}
+
+#route-title {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+#route-summary {
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.route-address {
+  width: 80%;
+}
+
+.route-address,
+.route-distance {
+  color: #7f8c8d;
+  font-weight: 300;
+}
+
+#route-disclaimer {
+  color: #7f8c8d;
+  font-size: 12px;
+}
+
+.route-name {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.route-info {
+  text-align: right;
+  display: inline-block;
+  font-size: 12px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+.route-divider {
+  text-align: left;
+  width: 100%;
+  position: relative;
+}
+
+.route-hr {
+  height: 0px;
+  border-width: 1px 0 0 0;
+  border-style: solid;
+  width: 70%;
+  margin: 0;
+  display: inline-block;
+  vertical-align: middle;
+  color: #34495e;
+}
+
+#route-panel-header {
+  width: 100%;
+  margin-bottom: 5px;
+}
