@@ -366,7 +366,7 @@ function showRouteSummary(route, waypointsIDs) {
     miles += parseFloat((leg.distance.value * 0.000621371).toFixed(1));
   });
 
-  $('#path').append("<div id=\"route-header\"><div id=\"route-summary\">" + timify(seconds) + " <span class=\"route-distance\">(" + miles + " miles)</span></div><div id=\"route-disclaimer\">without traffic</div></div><div class=\"route-hr hr-header-2\"></div>");
+  $('#path').append("<div id=\"route-header\"><div id=\"route-summary\">" + timify(seconds) + " <span class=\"route-distance\">(" + miles.toFixed(1) + " miles)</span></div><div id=\"route-disclaimer\">without traffic</div></div><div class=\"route-hr hr-header-2\"></div>");
 
   $.each(order, function(index, id) {
     const ID = parseInt(id);
