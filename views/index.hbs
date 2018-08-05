@@ -1,7 +1,7 @@
 <div id="loader">loading...</div>
 <input id="pac-input" class="pac-controls" type="text" placeholder="Search Box">
 <div class="instructions">
-  Select a few locations using the search box. To get the optimal route from first location to the last, hit "Calculate Route"/"Get Directions".
+  Select a few locations using the search box. "Calculate Route" will find the optimal route from your origin to your destination.
   <p></p>
   <div class="instructions-hide" onclick="hideInstructions()">
     Hide instructions
@@ -49,7 +49,6 @@
 function hideInstructions() {
   $(".instructions").remove();
 }
-
 
 var map = null;
 var markers = {};
@@ -168,6 +167,9 @@ function init(opts) {
   google.maps.event.addListenerOnce(map, 'idle', function() {
     setTimeout(function() {
       $('#loader').remove();
+      if ($(document).width() < 900) {
+        window.alert("For the best user experience, a window size of at least 900px is recommended.");
+      }
     }, 600);
   });
 }
@@ -217,6 +219,7 @@ function clearInterface(directionsDisplay) {
   geometries = {};
   names = {};
   directionsDisplay.set('directions', null);
+  labelIndex = 0;
 }
 
 function addInfo(name, marker) {
@@ -298,11 +301,6 @@ function referToGoogleMaps() {
 function toggleButton(referButton) {
   if (referButton) {
     $('#calculate-route').val(' Get Directions ');
-    // forLocations(function(id) {
-    //   $("#td-" + (parseInt(id) + 1).toString()).off('click', removeLocation);
-    //   $("#td-" + (parseInt(id) + 1).toString()).text('');
-    //   $("#td-" + (parseInt(id) + 1).toString()).css('cursor', 'default');
-    // });
     $("#table").hide();
     $('#pac-input').css('z-index', -3);
   } else {
@@ -333,17 +331,17 @@ function showRouteSummary(route, waypointsIDs) {
     order.push(waypointsIDs[id]);
   });
   order.push(destinationID);
-  $('#path').append("<div id=\"route-title\">Route Summary</div>");
+  $('#path').append("<div id=\"route-title\">Route Summary</div><div class=\"route-hr hr-header\"></div>");
 
 
   var seconds = 0;
-  var meters = 0;
+  var miles = 0;
   $.each(route.legs, function(id, leg) {
-    seconds += leg.duration.value;
-    meters += leg.distance.value;
+    seconds += Math.round(leg.duration.value / 60) * 60;
+    miles += parseFloat((leg.distance.value * 0.000621371).toFixed(1));
   });
 
-  $('#path').append("<div id=\"route-header\"><div id=\"route-summary\">" + timify(seconds) + " <span class=\"route-distance\">(" + (meters * 0.000621371).toFixed(1) + " miles)</span></div><div id=\"route-disclaimer\">without traffic</div></div><div id=\"route-panel-header\" class=\"route-hr \"></div>");
+  $('#path').append("<div id=\"route-header\"><div id=\"route-summary\">" + timify(seconds) + " <span class=\"route-distance\">(" + miles + " miles)</span></div><div id=\"route-disclaimer\">without traffic</div></div><div class=\"route-hr hr-header-2\"></div>");
 
   $.each(order, function(index, id) {
     const ID = parseInt(id);
@@ -363,6 +361,7 @@ function showRouteSummary(route, waypointsIDs) {
 
     rowCount++;
   });
+  $('#path').append("<div class=\"route-hr hr-footer\"></div><div>Click \"Get Directions\" for detailed directions on the Google Maps site!</div>");
 }
 
 function timify(seconds) {

@@ -8,14 +8,14 @@
 
 #map {
   height: 100%;
-  width: 70%;
   float: left;
+  width: calc(100% - 400px);
 }
 
 #side-panel {
   height: 100%;
-  width: 30%;
   float: left;
+  width: 400px;
 }
 /* Optional: Makes the sample page fill the window. */
 html, body {
@@ -159,12 +159,12 @@ html, body {
   position: fixed;
   z-index: 1;
   font-family: Roboto;
-  top: 10px;
-  left: 10px;
+  top: 30px;
+  left: 30px;
   width: 260px;
-  background-color: #F5F5F5;
+  background-color: #FFFFFF;
   padding: 15px;
-  color: #153B50;
+  color: #000000;
   border: solid;
   border-width: 2px;
   border-color: #9DC5BB;
@@ -273,7 +273,6 @@ select {
 
 #route-title {
   font-size: 24px;
-  margin-bottom: 5px;
 }
 
 #route-summary {
@@ -283,6 +282,7 @@ select {
 
 .route-address {
   width: 80%;
+  margin-left: 15px;
 }
 
 .route-address,
@@ -299,6 +299,7 @@ select {
 .route-name {
   font-size: 16px;
   margin-bottom: 5px;
+  margin-left: 15px;
 }
 
 .route-info {
@@ -320,14 +321,34 @@ select {
   height: 0px;
   border-width: 1px 0 0 0;
   border-style: solid;
-  width: 70%;
+  width: 65%;
   margin: 0;
   display: inline-block;
   vertical-align: middle;
   color: #34495e;
 }
 
-#route-panel-header {
+.hr-header,
+.hr-footer {
   width: 100%;
   margin-bottom: 5px;
+}
+
+.hr-footer {
+  margin-bottom: 10px;
+}
+
+.hr-header-2 {
+  width: 100%;
+  margin-bottom: 0px;
+}
+
+@media screen and (min-width: 1333px) {
+  #map {
+    width: 70%;
+  }
+
+  #side-panel {
+    width: 30%;
+  }
 }
