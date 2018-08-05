@@ -4,6 +4,7 @@
   height: 100%;
   width: 100%;
   display: inline-block;
+  text-align: center;
 }
 
 #map {
@@ -23,6 +24,7 @@ html, body {
   margin: 0;
   padding: 0;
 }
+
 #description {
   font-family: Roboto;
   font-size: 15px;
@@ -115,8 +117,13 @@ html, body {
 
 .panel {
   font-family: Roboto;
-  background-color: #F5F5F5;
+  background-color: #f5f6fa;
   margin: 0;
+}
+
+.panel-inner {
+  margin: 10px;
+  text-align: left;
 }
 
 .outer {
@@ -125,7 +132,9 @@ html, body {
 }
 
 .inner {
-  margin: 10px;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .controls {
@@ -144,11 +153,11 @@ html, body {
 }
 
 .controls:hover {
-  background-color: #bdc3c7;
+  background-color: #EEEEEE;
 }
 
 .controls:active {
-  background-color: #7f8c8d;
+  background-color: #1E88E5;
 }
 
 .controls:focus {
@@ -180,19 +189,26 @@ html, body {
 }
 
 #panel-title {
+  width: 80%;
   font-size: 24pt;
   color: #153B50;
   text-align: center;
-  margin: 10px;
+  margin: 5% auto;
   background-color: #FFFFFF;
   border: solid;
   border-width: 1px;
   border-color: #429EA6;
 }
 
+#table {
+  width: 90%;
+}
+
 table {
   border-collapse: collapse;
   width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 td, th {
@@ -240,8 +256,14 @@ tr:nth-child(even) {
   text-align: center;
 }
 
+#toggle-wrapper {
+  margin: 10px auto 35px auto;
+  text-align: center;
+  display: inline-block;
+}
+
 #select-wrapper {
-  margin-top: 30px;
+  margin-top: 10px;
   text-align: center;
 }
 
@@ -264,6 +286,8 @@ select {
 #path {
   margin: 20px auto;
   width: 90%;
+  /*background-color: #FFFFFF;*/
+  /*padding: 20px;*/
 }
 
 .route-panel {
@@ -273,6 +297,9 @@ select {
 
 #route-title {
   font-size: 24px;
+  padding: 10px 5px;
+  background-color: #2196F3;
+  color: #FFFFFF;
 }
 
 #route-summary {
@@ -328,7 +355,11 @@ select {
   color: #34495e;
 }
 
-.hr-header,
+.hr-header {
+  width: 100%;
+  vertical-align: top;
+}
+
 .hr-footer {
   width: 100%;
   margin-bottom: 5px;
@@ -351,4 +382,74 @@ select {
   #side-panel {
     width: 30%;
   }
+}
+
+/* radio button stuff */
+
+.container {
+  display: inline-block;
+  position: relative;
+  padding-left: 36px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  margin-left: -15px;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 40px;
+  width: 40px;
+  background-color: #29B6F6;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.checkmark.first {
+  border-top-left-radius: 15%;
+  border-bottom-left-radius: 15%;
+}
+
+.checkmark.last {
+  border-top-right-radius: 15%;
+  border-bottom-right-radius: 15%;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #42A5F5;
+}
+
+/* When the radio button is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: #1E88E5;
+}
+
+#driving {
+  background-image: url('../images/ic_directions_car_white_24dp.png');
+}
+
+#walking {
+  background-image: url('../images/ic_directions_walk_white_24dp.png');
+}
+
+#bicycling {
+  background-image: url('../images/ic_directions_bike_white_24dp.png');
+}
+
+#transit {
+  background-image: url('../images/ic_directions_transit_white_24dp.png');
 }

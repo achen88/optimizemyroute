@@ -11,9 +11,27 @@
   <div id="map"></div>
   <div id="side-panel" class="panel outer">
     <div id="panel-title">
-      <img id="logo" src="/images/crop.png" alt="Optimize My Route">
+      <img id="logo" src="/images/crop_black.png" alt="Optimize My Route">
     </div>
-    <div id="select-wrapper">
+    <div id="toggle-wrapper" class="inner">
+      <label class="container">
+        <input type="radio" checked="checked" name="radio" value="DRIVING">
+        <span class="checkmark first" id="driving"></span>
+      </label>
+      <label class="container">
+        <input type="radio" name="radio" value="WALKING">
+        <span class="checkmark" id="walking"></span>
+      </label>
+      <label class="container">
+        <input type="radio" name="radio" value="BICYCLING">
+        <span class="checkmark last" id="bicycling"></span>
+      </label>
+<!--       <label class="container">
+        <input type="radio" name="radio" value="TRANSIT">
+        <span class="checkmark last" id="transit"></span>
+      </label> -->
+    </div>
+    <div id="select-wrapper" class="inner">
       <div id="select-wrapper-outer">
         <div class="select-wrapper-inner">
           Origin:
@@ -27,11 +45,11 @@
         </div>
       </div>
     </div>
-    <div id="button-wrapper">
+    <div id="button-wrapper" class="inner">
       <input id="calculate-route" class="controls" type="button" value="Calculate Route">
       <input id="clear" class="controls" type="button" value="Reset">
     </div>
-    <div id="info" class="panel inner">
+    <div id="info" class="panel-inner inner">
       <table id="table">
         <tr>
           <th class="td-label"><img id="marker-icon" src="/images/marker.png" alt-"ID"></th>
@@ -96,7 +114,7 @@ var removeLocation = function() {
 }
 
 function init(opts) {
-  var directionsDisplay = new google.maps.DirectionsRenderer({ suppressMarkers: true });
+  var directionsDisplay = new google.maps.DirectionsRenderer({ suppressMarkers: true, suppressBicyclingLayer: true });
   var directionsService = new google.maps.DirectionsService;
   map = new google.maps.Map(document.getElementById('map'), opts);
   directionsDisplay.setMap(map);
@@ -163,6 +181,7 @@ function init(opts) {
     referButton = false;
     toggleButton(referButton);
   });
+  $('#path').hide();
 
   google.maps.event.addListenerOnce(map, 'idle', function() {
     setTimeout(function() {
@@ -261,7 +280,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     destination: destination,
     waypoints: waypoints,
     optimizeWaypoints: true,
-    travelMode: 'DRIVING'
+    travelMode: $("input[name='radio']:checked").val()
   }, function(response, status) {
     if (status === 'OK') {
       directionsDisplay.setDirections(response);
@@ -303,10 +322,16 @@ function toggleButton(referButton) {
     $('#calculate-route').val(' Get Directions ');
     $("#table").hide();
     $('#pac-input').css('z-index', -3);
+    $('#path').show();
+    $('#toggle-wrapper').hide();
+    $('#select-wrapper').hide();
   } else {
     $('#calculate-route').val('Calculate Route');
     $("#table").show();
     $('#pac-input').css('z-index', 3);
+    $('#path').hide();
+    $('#toggle-wrapper').show();
+    $('#select-wrapper').show();
   }
 }
 
